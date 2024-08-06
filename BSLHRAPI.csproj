@@ -158,14 +158,11 @@
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
-    <Compile Include="Controllers\VisitorController.cs" />
     <Compile Include="DAL\DALEmployee.cs" />
-    <Compile Include="DAL\DALVisitor.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\clsEmployee.cs" />
-    <Compile Include="Models\clsVisitor.cs" />
     <Compile Include="Models\Generic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -223,7 +220,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Employee\" />
-    <Folder Include="Views\Visitor\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -272,7 +268,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>61747</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44364/</IISUrl>
+          <IISUrl>https://localhost:44363/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

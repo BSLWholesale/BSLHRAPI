@@ -68,5 +68,25 @@ namespace BSLHRAPI.Controllers
             objResp = _DALEmployee.Fn_Get_EmployeeByID(objReq);
             return objResp;
         }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Http.Route("api/Employee/Fn_Fill_DropdownList")]
+        public List<clsResponseDropdown> Fn_Fill_DropdownList(clsRequestDropdown objReq)
+        {
+            var objResp = new List<clsResponseDropdown>();
+            objResp = _DALEmployee.Fn_Fill_DropdownList(objReq);
+            return objResp;
+
+        }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Http.Route("api/Employee/Fn_Get_MX_TravelID")]
+        public clsTravelRequest Fn_Get_MX_TravelID(clsTravelRequest objReq)
+        {
+            var objResp = new clsTravelRequest();
+            objResp = _DALEmployee.Fn_Get_MX_TravelID(objReq);
+            return objResp;
+
+        }
     }
 }
