@@ -17,7 +17,6 @@ namespace BSLHRAPI.DAL
         SqlDataAdapter da;
         SqlDataReader dr;
         DataSet ds;
-        int mxTravelID;
 
 
         public clsEmployee Fn_Add_Employee(clsEmployee objReq)
@@ -487,7 +486,7 @@ namespace BSLHRAPI.DAL
             return _productmodel;
 
         }
-       
+
 
         public clsTravelRequest Fn_Get_MX_TravelID(clsTravelRequest objReq)
         {
@@ -498,19 +497,27 @@ namespace BSLHRAPI.DAL
                 if (Con.State == ConnectionState.Broken) { Con.Close(); }
                 if (Con.State == ConnectionState.Closed) { Con.Open(); }
                 // string strSql = "Select Concat(format(getdate(),'ddMMyyyy'), FORMAT(ISNULL(max(cast(substring(MaterialCode,13,6) as int))+1,1),'000000')) from " + objReq.vTBLName + " where Convert(date,CreatedOn)=Convert(date,getdate())";
-                string strSql = "Select Concat(format(getdate(),'ddMMyyyy'), FORMAT(ISNULL(max(TravelID)+1,1),'000000')) from TravelRequest where Convert(date,RequestDate)=Convert(date,getdate())";
+                string strSql = "Select MAX(TravelID) as TravelID from TravelRequest";
                 SqlCommand cmd = new SqlCommand(strSql, Con);
                 SqlDataReader dr = cmd.ExecuteReader();
                 if (dr.HasRows)
                 {
                     dr.Read();
-                    objResp.TravelID = Convert.ToInt64(dr[0].ToString());
+                    string strID = dr["TravelID"].ToString();
+                    if (strID == null || strID == "")
+                    {
+                        objResp.TravelID = 100001;
+                    }
+                    else
+                    {
+                        objResp.TravelID = Convert.ToInt64(dr[0].ToString()) + 1;
+                    }
+                   
                     objResp.vErrorMsg = "Success";
                 }
                 else
                 {
-                    string dt = DateTime.Now.ToString("ddMMyyyy");
-                    objResp.TravelID = Convert.ToInt64(dt + "000001");
+                    objResp.TravelID = 100001;
                     objResp.vErrorMsg = "Success";
                 }
                 dr.Close();

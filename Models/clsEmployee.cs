@@ -68,21 +68,26 @@ namespace BSLHRAPI.Models
     {
         public Nullable<Int64> TravelID { get; set; }
         public Nullable<Int64> EmpId { get; set; }
-        public Nullable<DateTime> RequestDate { get; set; }
+        public DateTime RequestDate { get; set; }
         public int BSLTravelDesk { get; set; }
         public string TravelReport { get; set; }
+        public List<clsRequestList> oRequestList { get; set; }
         public string vErrorMsg { get; set; }
     }
 
-    public class clsTravelRequestDetail
+    public class clsRequestList
     {
-        public Nullable<int> TRDetId { get; set; }
-        public Nullable<Int64> TravelID { get; set; }
-        public Nullable<int> TravelType { get; set; }
-        public Nullable<int> TModeId { get; set; }
+        public int TRDetId { get; set; }
+        public Int64 TravelID { get; set; }
+        public string vTravelMode { get; set; }
+        public DateTime DepartDate { get; set; }
+        public DateTime ReturnDate { get; set; }
+        public string vSource { get; set; }
+        public string vDestination { get; set; }
         public float Amount { get; set; }
-        public Nullable<int> Qty { get; set; }
+        public int Qty { get; set; }
         public string vErrorMsg { get; set; }
+
     }
 
     public class clsRequestDropdown
