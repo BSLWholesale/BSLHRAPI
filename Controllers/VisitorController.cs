@@ -33,5 +33,14 @@ namespace BSLHRAPI.Controllers
             return objResp;
         }
 
+        [System.Web.Http.HttpPost]
+        [System.Web.Http.Route("api/Visitor/Fn_Update_VisitorOutTime")]
+        public clsVisitor Fn_Update_VisitorOutTime(clsVisitor objReq)
+        {
+            var objResp = new clsVisitor();
+            objResp = _DALVisitor.Fn_Update_VisitorOutTime(objReq);
+            return objResp;
+        }
+
     }
 }

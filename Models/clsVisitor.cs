@@ -7,7 +7,8 @@ namespace BSLHRAPI.Models
 {
     public class clsVisitor
     {
-        public int VisitorPassId { get; set; }
+        //public int VisitorPassId { get; set; }
+        public double VisitorPassId { get; set; }
         public string VisitorName { get; set; }
         public string VisitorCompanyName { get; set; }
         public string VisitorMobileNo { get; set; }
@@ -23,7 +24,7 @@ namespace BSLHRAPI.Models
         public string VisitorInDateTime { get; set; }
         //public DateTime VisitorOutDateTime { get; set; }
         public string VisitorOutDateTime { get; set; }
-        public bool VStatus { get; set; }
+        public string VStatus { get; set; }
         public int LoginId { get; set; }
         public string ErrorMsg { get; set; }
 

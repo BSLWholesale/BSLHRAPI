@@ -18,17 +18,14 @@ namespace BSLHRAPI.DAL
         SqlDataAdapter da;
         SqlDataReader dr;
         DataSet ds;
+        double VisitorId;
 
         public clsVisitor Fn_Insert_Visitor(clsVisitor objReq)
         {
             var objResp = new clsVisitor();
             try
             {
-                if (objReq.VisitorPassId == 0)
-                {
-                    objResp.ErrorMsg = "Visitor Id is not Supplied.";
-                }
-                else if (string.IsNullOrWhiteSpace(objReq.VisitorName))
+                if (string.IsNullOrWhiteSpace(objReq.VisitorName))
                 {
                     objResp.ErrorMsg = "Please Enter Visitor Name.";
                 }
@@ -48,10 +45,10 @@ namespace BSLHRAPI.DAL
                 {
                     objResp.ErrorMsg = "Please Enter a Purpose of Visit.";
                 }
-                else if (string.IsNullOrWhiteSpace(objReq.VisitorReason))
-                {
-                    objResp.ErrorMsg = "Please Enter a Reason.";
-                }
+                //else if (string.IsNullOrWhiteSpace(objReq.VisitorReason))
+                //{
+                //    objResp.ErrorMsg = "Please Enter a Reason.";
+                //}
                 else if (string.IsNullOrWhiteSpace(objReq.VisitorIdProof))
                 {
                     objResp.ErrorMsg = "Please Select a ID Proof.";
@@ -81,22 +78,24 @@ namespace BSLHRAPI.DAL
 
                     cmd = new SqlCommand("USP_VisitorGatePass", con);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@VPassId", objReq.VisitorPassId);
+                    //cmd.Parameters.AddWithValue("@VPassId", objReq.VisitorPassId);
+                    VisitorId = Fn_Get_Max_VisitorId(objReq);
+                    cmd.Parameters.AddWithValue("@VPassId", VisitorId);
                     cmd.Parameters.AddWithValue("@VisitorName", objReq.VisitorName);
                     cmd.Parameters.AddWithValue("@VCompanyName", objReq.VisitorCompanyName);
                     cmd.Parameters.AddWithValue("@VMobile", objReq.VisitorMobileNo);
                     cmd.Parameters.AddWithValue("@VAddress", objReq.VisitorAddress);
                     cmd.Parameters.AddWithValue("@VPurposeOfVisit", objReq.VisitorPurposeOfVisit);
-                    cmd.Parameters.AddWithValue("@VReason", objReq.VisitorReason);
+                    //cmd.Parameters.AddWithValue("@VReason", objReq.VisitorReason);
                     cmd.Parameters.AddWithValue("@VisitorIdProof", objReq.VisitorIdProof);
                     cmd.Parameters.AddWithValue("@VisitorIdProofNo", objReq.VisitorIdProofNo);
                     cmd.Parameters.AddWithValue("@VisitorPassNo", objReq.VisitorPassNo);
                     cmd.Parameters.AddWithValue("@WhomToMeet", objReq.WhomToMeet);
                     cmd.Parameters.AddWithValue("@PersonDepartment", objReq.PersonDepartment);
-                    cmd.Parameters.AddWithValue("@VisitorInDateTime", objReq.VisitorInDateTime);
-                    //cmd.Parameters.AddWithValue("@VisitorInDateTime", DateTime.Now);
+                    //cmd.Parameters.AddWithValue("@VisitorInDateTime", Convert.ToDateTime(objReq.VisitorInDateTime));
+                    cmd.Parameters.AddWithValue("@VisitorInDateTime", DateTime.Now);
                     //cmd.Parameters.AddWithValue("@VisitorOutDateTime", objReq.VisitorOutDateTime);
-                    cmd.Parameters.AddWithValue("@VStatus", objReq.VStatus);
+                    cmd.Parameters.AddWithValue("@VStatus", "IN");
                     cmd.Parameters.AddWithValue("@LoginId", objReq.LoginId);
                     cmd.Parameters.AddWithValue("@QueryType", "Insert");
 
@@ -120,7 +119,7 @@ namespace BSLHRAPI.DAL
             finally
             {
                 con.Close();
-                cmd.Dispose();
+                //cmd.Dispose();
             }
             return objResp;
         }
@@ -151,10 +150,16 @@ namespace BSLHRAPI.DAL
                     {
                         objResp = new clsVisitor();
 
-                        objResp.VisitorPassId = Convert.ToInt32(ds.Tables[0].Rows[i]["VPassId"]);
+                        objResp.VisitorPassId = Convert.ToDouble(ds.Tables[0].Rows[i]["VPassId"]);
                         objResp.VisitorName = Convert.ToString(ds.Tables[0].Rows[i]["VisitorName"]);
                         objResp.VisitorMobileNo = Convert.ToString(ds.Tables[0].Rows[i]["VMobile"]);
+                        objResp.VisitorCompanyName = Convert.ToString(ds.Tables[0].Rows[i]["VCompanyName"]);
                         objResp.VisitorInDateTime = Convert.ToString(ds.Tables[0].Rows[i]["VisitorInDateTime"]);
+                        objResp.VisitorOutDateTime = Convert.ToString(ds.Tables[0].Rows[i]["VisitorOutDateTime"]);
+                        objResp.VStatus = Convert.ToString(ds.Tables[0].Rows[i]["VStatus"]);
+
+                        objResp.ErrorMsg = "Success";
+                        _objRespList.Add(objResp);
                         i++;
                     }
                 }
@@ -178,5 +183,96 @@ namespace BSLHRAPI.DAL
             return _objRespList;
         }
 
+
+        public double Fn_Get_Max_VisitorId(clsVisitor objReq)
+        {
+            var objResp = new clsVisitor();
+
+            try
+            {
+                if (con.State == ConnectionState.Broken)
+                { con.Close(); }
+                if (con.State == ConnectionState.Closed)
+                { con.Open(); }
+
+                string strSql = "SELECT CONCAT(FORMAT(GETDATE(),'ddMMyyyy'),SUBSTRING(FORMAT(ISNULL(MAX(VPassId)+1,1),'00000000000000'),9,6)) FROM VisitorGatePass WHERE CONVERT(DATE, VisitorInDateTime)= CONVERT(DATE, GETDATE())";
+                SqlCommand cmd = new SqlCommand(strSql, con);
+                SqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    dr.Read();
+                    //objResp.VisitorPassId = Convert.ToInt32(dr[0].ToString());
+                    VisitorId = Convert.ToDouble(dr[0].ToString());
+                    objResp.ErrorMsg = "Success";
+                }
+                else
+                {
+                    string dt = DateTime.Now.ToString("ddMMyyyy");
+                    //objResp.VisitorPassId = Convert.ToInt32(dt + "00000000000001");
+                    VisitorId = Convert.ToDouble(dt + "00000000000001");
+                    objResp.ErrorMsg = "Success";
+                }
+                dr.Close();
+                cmd.Dispose();
+            }
+            catch (Exception exp)
+            {
+                Logger.WriteLog("Function Name : Fn_Get_Max_VisitorId", " " + "Error Msg : " + exp.Message.ToString(), new StackTrace(exp, true));
+                objResp.ErrorMsg = exp.Message.ToString();
+            }
+            finally
+            {
+                //con.Close();
+            }
+            return VisitorId;
+        }
+
+
+        public clsVisitor Fn_Update_VisitorOutTime(clsVisitor objReq)
+        {
+            var objResp = new clsVisitor();
+            try
+            {
+                if (objReq.VisitorPassId == 0)
+                {
+                    objResp.ErrorMsg = "Please Valid Visitor Pass ID";
+                }
+                else
+                {
+                    if (con.State == ConnectionState.Broken)
+                    { con.Close(); }
+                    if (con.State == ConnectionState.Closed)
+                    { con.Open(); }
+
+                    cmd = new SqlCommand("USP_VisitorGatePass", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@VPassId", objReq.VisitorPassId);
+                    cmd.Parameters.AddWithValue("@VisitorOutDateTime", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@VStatus", "OUT");
+                    cmd.Parameters.AddWithValue("@QueryType", "Update");
+
+                    int i = 0;
+                    i = cmd.ExecuteNonQuery();
+                    if (i > 0)
+                    {
+                        objResp.ErrorMsg = "Success";
+                    }
+                    else
+                    {
+                        objResp.ErrorMsg = "Failed";
+                    }
+                }
+            }
+            catch (Exception exp)
+            {
+                Logger.WriteLog("Function Name : Fn_Update_VisitorOutTime", " " + "Error Msg : " + exp.Message.ToString(), new StackTrace(exp, true));
+                objResp.ErrorMsg = exp.Message.ToString();
+            }
+            finally
+            {
+                con.Close();
+            }
+            return objResp;
+        }
     }
 }
